@@ -21,7 +21,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
         await client.connect();
         const database = client.db("travel-trailer");
         const allDatabaseCollection = database.collection("bookiing");
-        const addCollection= client.db("travel-trailer").collection("addBooking")
+        const addCollection= client.db("travel-trailer").collection("addBooking");
 
       ///get all data
          app.get('/booking', async(req, res)=>{
@@ -37,6 +37,24 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
             res.send(result)
         })
 
+        //get My data
+        app.get('/addBooking/:email', async(req, res)=>{
+          const result = await addCollection.find({email: req.params.email}).toArray();
+          console.log("find my data");
+          res.send(result);
+
+
+        })
+
+        //delete my data
+        app.delete('/deleteBooking/:id', async(req, res)=>{
+          const id= req.params.id;
+          const query= {_id: ObjectId(id)};
+          const result = await addCollection.deleteOne(query);
+          console.log(result);
+          res.send(result);
+
+        })
         // post data
         app.post('/booking', async(req, res)=>{
             const docs= req.body;
