@@ -5,8 +5,6 @@ const port = process.env. PORT || 5000 ;
 require('dotenv').config();
 const ObjectId= require('mongodb').ObjectId;
 
-//  traveldb
-//   VcHcJ4RBOnKk9sUc
 app.use(cors());
 app.use(express.json())
 
@@ -43,11 +41,28 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
           console.log("find my data");
           res.send(result);
 
+        });
+        
+        ///get All booking data
+        app.get('/addBooking', async(req, res)=>{
+          const cursor = await addCollection.find({}).toArray();
+          console.log('all data is here');
+          res.send(cursor);
 
         })
 
+
         //delete my data
         app.delete('/deleteBooking/:id', async(req, res)=>{
+          const id= req.params.id;
+          const query= {_id: ObjectId(id)};
+          const result = await addCollection.deleteOne(query);
+          console.log(result);
+          res.send(result);
+
+        })
+        //delete my data
+        app.delete('/deleteAllBooking/:id', async(req, res)=>{
           const id= req.params.id;
           const query= {_id: ObjectId(id)};
           const result = await addCollection.deleteOne(query);
@@ -71,6 +86,20 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
             const result = await addCollection.insertOne(doc);
             console.log(result);
             res.send(result);
+
+        })
+
+        ///approve update data
+        app.put('/approveBookig/:id', async(req, res)=>{
+          const id= req.params.id;
+          const updateMethod= req.body;
+          const filter= {_id: ObjectId(id)};
+          const result = await addCollection.updateOne(filter,{
+            $set:{
+              status:'Approve'
+            }
+          })
+          res.send(result)
 
         })
 
